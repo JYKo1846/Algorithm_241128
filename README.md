@@ -503,4 +503,152 @@ bool comp(pair<int, pair<string, int>> a, pair<int, pair<string, int>> b)
 
 처음 구현은 0031번 문제와 같이 vector<pair<pair>>사용하여 구현하였으나 시간 초과.
 
-C++의 map STL 사용하여 자동 정렬 & 
+C++의 Map STL 사용하여 자동 정렬 & 삽입, 삭제 기능 사용하여 구현.
+
+Item 과 Key 값을 한 요소로 가지며 map_val->first 가 키 값으로 할당, 이진 트리의 오름 차순으로 정렬되도록 되어 있음.
+
+내림 차순으로 정렬을 원할 경우, map<string, int, greater<원하는 데이터 타입>> 으로 선언시 내림 차순 가능.
+
+탐색, 삽입, 삭제 모두 $Big-O$ : $(logN)$ 으로 구현되어 있음.
+
+map 으로 회사원들을 기록하고, 문자열을 파싱하여 enter시 map에 삽입, leave시 erase 하도록 구현, PASS
+```
+
+### 0033. BOJ 1302 베스트셀러. S4
+:page_with_curl: https://www.acmicpc.net/problem/1302
+
+```
+입력이 N개 주어진다. 오늘 팔린 책의 이름이 주어질 때, 오늘 가장 많이 팔린 책의 이름을 출력하는 문제.
+
+C++의 Map.h를 사용하여, 입력 받는 책이 map_Var에 있는지 탐색 -> 있을 경우, var[책_이름]++로 var->second++;
+없을 경우, map_Var.insert({책_이름, 1});으로 요소 삽입하여
+
+Iterator를 사용하여 map 데이터 구조 내부 모든 요소 탐색 & 가장 많이 팔린 책의 이름을 출력도록 구현 , PASS
+```
+
+### 0034. BOJ 18870 좌표 압축. S2
+:page_with_curl: https://www.acmicpc.net/problem/18870
+
+```   
+입력으로 각 좌표의 위치가 -10^9 ~ 10^9 까지 주어진다.
+
+이때, 자기 자신보다 작은 좌표가 몇개 있는지 모든 좌표에 대해 출력하도록 하는 문제.
+
+- 1번째 시도 => FAIL
+
+vector.h 를 사용하여, 2가지 벡터를 생성. 하나는 원본, 하나는 정렬을 위함.
+
+원본의 각 원소들을 탐색하며, 정렬된 벡터에서 자기 자신이 나올때까지 나오는 작은 수를 세 출력하고자 했으나
+
+시간 초과에 걸림. 사유 : 좌표의 범위가 최대 -1억 ~ 1억 이므로.
+
+- 2번째 시도 => PASS
+
+첫번째 시도에서 구현한 것 + 시간을 더 줄일 수 있는 방법은 unique() 함수 사용
+
+unique(vec.begin(), vec.end()) : 중복되지 않는 원소들을 맨 앞부터 채워 넣는다.
+
+기존 벡터에 남는 공간은 기존의 데이터를 유지하게 된다.
+
+그것을 없애고, 중복 없는 원소들만 남기고자 할 경우,
+
+vec.erase(unique(vec.begin(), vec.end()), vec.end); 를 사용하여
+
+중복 없는 벡터 값만 가지도록 한다.
+
+그 이후, 시간을 줄일 수 있는 또 다른 방법으로
+
+lower_bound(vec.begin(), vec.end(), val) 를 사용하였다.
+
+lower_bound()의 경우, 이진 탐색으로 val 값보다 크거나 같은 원소의 위치 iterator를 반환한다.
+
+단, 위 함수를 사용하기 위해선 오름차순으로 정렬되어 있어야 한다.
+
+따라서, unique 함수와 lower_bound 함수를 사용하여 아래와 같이 구현,
+
+중복되지 않은, 자기 자신보다 작은 수의 갯수를 lower_bound의 반환값 위치로 알 수 있으므로
+
+해당 위치를 출력하도록 하여 문제에서 요구하는 답을 출력하도록 구현 하였음. => PASS
+
+sort(s_vec.begin(), s_vec.end());
+s_vec.erase(unique(s_vec.begin(), s_vec.end()), s_vec.end());
+
+for(i= 0; i< vec.size(); i++)
+{
+	auto iter= lower_bound(s_vec.begin(), s_vec.end(), vec[i]);
+	cout << iter - s_vec.begin() << " ";
+}
+
+lower_bound(begin(), end(), vec[i]) - vec.begin(); 의 경우, 해당 요소의 인덱스값을 출력하는 문장이다.
+```
+
+### 0035. BOJ 2910 빈도 정렬. S3
+:page_with_curl: https://www.acmicpc.net/problem/2910
+
+```
+입력받은 수를 정렬한다. 정렬하되, 입력된 빈도수가 높은 순으로 출력한다. 만약 빈도수가 같을 경우, 먼저 입력된 순서대로 출력한다.
+
+세가지의 정보를 저장해야 한다. 입력받은 수, 입력된 횟수, 처음 입력된 위치.
+
+따라서, tuple 자료 구조와 정렬을 위해 vector를 같이 사용하도록 하였다.
+
+vector<tuple<long long, int, int>> 	// long long : 입력값, int : 빈도 수, int : 처음 입력 위치
+
+bool comp(tuple<long long, int, int> a, tuple<long long, int, int> b)
+{
+	if(get<1>(a) == get<1>(b))
+		return get<2>(a) < get<2>(b);
+	return get<1>(a) > get<1>(b);
+}
+
+cin >> X;
+for(i= 0; i< vec.size(); i++)
+{
+	if(X== get<0>(vec[i]))
+	{
+		get<1>(vec[i])++;;
+		flg= true;
+		break;
+	}
+	if(!flg)
+		vec.push_back(make_tuple({X, 1, i});
+}
+
+sort(vec.begin(), vec.end(), comp);
+
+for(i= 0; i< vec.size(); i++)
+{
+	for(j= 0; j< get<1>(vec[i]); j++)
+		cout << get<0>(vec[i]) << " ";
+}
+
+위와 같은 코드로 구현 & PASS 하였다.
+```
+
+### 0036. BOJ 1931 회의실 배정. S1
+:page_with_curl: https://www.acmicpc.net/problem/1931
+
+```
+회의실을 이용하기 위해, 시작 시간과 종료 시간을 N개의 입력으로 준다. 1<= N <= 10만
+
+이때, 열릴 수 있는 최대의 회의 갯수는 몇개인지 알아내는 문제이다.
+
+모든 경우의 수를 따질 경우, N! 경우의 수가 나올 수 있다.
+
+하지만, N이 최대 10만 이므로 N!의 경우의 수는 무조건 시간 초과가 나기 때문에 답이 될 수 없다.
+
+그리디 알고리즘으로 구현해야 되는 문제이다.
+
+1) 시작 시간으로 정렬하여 배치할 경우, 2) 회의 시간이 짧은 순으로 정렬할 경우, 두 경우 모두 정답이 아닌 경우가 있다.
+
+마지막으로, 3) 끝나는 시간으로 정렬할 경우로 구현 할 때, 추가 조건으로 끝나는 시간이 같을 경우 시작 시간이 빠른 회의부터
+
+배치하면 최적의 알고리즘이 될 것이다.
+
+그리디 알고리즘의 경우, 항상 알고리즘의 타당성을 확인해야 한다. 예제의 경우와, 끝나는 시간이 같을 경우,
+
+시작과 끝이 같은 회의가 입력으로 같이 들어올 경우 모두 만족하므로 해당 알고리즘으로 구현, 정렬하면 PASS가 된다.
+```
+
+
+
