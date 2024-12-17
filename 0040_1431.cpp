@@ -24,7 +24,7 @@ bool comp(string a, string b)
 				tb+= b[i]- '0';
 		}
 		
-		if(ta== tb)
+		if(ta== tb)  
 			return a < b;
 		else if (ta< tb)
 			return 1;
