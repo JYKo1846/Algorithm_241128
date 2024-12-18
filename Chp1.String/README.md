@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Chapter 1. 문자열
 문제 뒤의 알파벳&숫자 : 문제의 난이도 B(Bronze) S(Silver) G(Gold) P(Platinum) / 숫자가 작을수록 난이도가 높아짐
 
