@@ -1,14 +1,6 @@
 # Chapter 1. 문자열
 문제 뒤의 알파벳&숫자 : 문제의 난이도 B(Bronze) S(Silver) G(Gold) P(Platinum) / 숫자가 작을수록 난이도가 높아짐
 
-=======
-# Algorithm 241128
-2024.11.28부터 정리 시작하여 코드 주석으로 부족한 설명을 풀어내기 위해 작성한 글
-
-문제 뒤의 알파벳&숫자 : 문제의 난이도 B(Bronze) S(Silver) G(Gold) P(Platinum) / 숫자가 작을수록 난이도가 높아짐
-
-
->>>>>>> 8c07ff9296589c49c6dc0e69264de3960c39ea1c
 ### 0001. BOJ 2744 대소문자 바꾸기. B5  
 :page_with_curl: https://www.acmicpc.net/problem/2744
 
