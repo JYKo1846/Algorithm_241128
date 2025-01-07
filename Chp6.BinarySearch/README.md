@@ -54,17 +54,29 @@ Str이 비교 문자열보다 클 경우 (사전 순으로 크거나, 길이가 
 
 같을 경우 0이 반환되는 것을 이용하여
 
+
 while(L<= R)
+
 {
+
 	mid= (L+R)/2;
+
 	if(query.compare(in[mid]) < 0) R= mid -1;
+
 	else if(query.compare(in[mid])> 0) L= mid +1;
+
 	else 
+
 	{
+
 		res++;
+
 		break;
+
 	}
+
 }
+
 
 로 구현하면 탐색을 시간 내에 할 수 있게 된다.
 
