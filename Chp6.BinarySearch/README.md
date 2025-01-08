@@ -174,3 +174,119 @@ for(int i= 0; i< N-1; i++)
 탐색할 조합의 수를 줄여 시간초과를 막고 PASS를 받을 수 있었다.
 
 ```
+
+### 0053. BOJ 10816 숫자 카드2. S4
+:page_with_curl: https://www.acmicpc.net/problem/10816
+
+```
+N개의 정수들로 이루어진 집합에서 질문으로 들어오는 수의 갯수를 출력하는 문제.
+
+단, 정수의 갯수는 최대 50만, 정수의 범위는 -1억 ~ 1억까지 이므로 int[]로 갯수를 세거나
+
+완전탐색으로 카운팅을 할 경우, 시간 초과.
+
+i) Map STL을 이용하여 중복되는 수를 Counting 하여 출력하여 해결.
+
+#include <map>
+
+map<int, int> in;
+
+int N, M, t;
+
+cin >> N;
+for(int i= 0; i< N; i++)
+{
+	cin >> t;
+	if(in.find(t)!=in.end())	// Map 자료구조에서 key 값이 t인 노드를 찾을 경우
+		in[t]++;				// 갯수 역할을 할 Value 값 ++
+	else						// 찾지 못했을 경우, map.find()는 in.end()를 return한다.
+		in.insert({t, 1});		// pair를 넣어주면 된다. map.insert({Key, Value}) 의 방식
+}
+
+cin >> M;
+for(int i= 0; i< M; i++)
+{
+	cin >> t;
+	if(in.find(t)!= in.end())
+		cout << in[t];
+	else
+		cout << "0";
+	cout << " ";
+}
+
+위와 같이 구현, O(NlogN), 사용 메모리 25520KB, 소요 시간 596ms
+
+ii) 이분 탐색을 이용하여 입력 받은 수를 Counting, 이분 탐색을 또 이용하여 질문으로 받는 수의 갯수 출력
+
+#include <vector>
+#include <algorithm>
+
+vector<int> befIn;			// 수의 갯수를 세기 전 정렬을 위해 입력 받기 위한 전처리 배열
+vector<pair<int, int>> in;	// 수의 갯수를 저장하기 위한 배열
+
+int N, M, t, L, R, mid;
+
+// Input Session
+cin >> N;
+for(int i= 0; i< N; i++)
+{
+	cin >> t;
+	befIn.push_back(t);
+}
+
+sort(befIn.begin(), befIn.end());
+
+// Counting Session
+for(int i= 0; i< N; i++)
+{
+	bool find= false;
+	L= 0;
+	R= in.size() -1;
+	while(L<= R)
+	{
+		mid= (L+R)/2;
+		if(befIn[i]< in[mid].first) R= mid -1;
+		else if(befIn[i] > in[mid].first) L= mid +1;
+		else
+		{
+			in[mid].second++;
+			find= true;
+			break;
+		}
+	}
+	
+	if(!find)
+		in.push_back({befIn[i], 1});
+}
+
+// Print Session
+cin >> M;
+for(int i= 0; i< M; i++)
+{
+	cin >> t;
+	bool find= false;
+	L= 0; 
+	R= in.size() -1;
+	while(L<= R)
+	{
+		mid= (L+R)/2;
+		if(t < in[mid].first) R= mid -1;
+		else if(t > in[mid].second) L= mid +1;
+		else
+		{
+			cout << in[mid].second;
+			find= true;
+			break;
+		}
+	}
+
+	if(!find)
+		cout << "0";
+	cout << " ";
+}
+cout << "\n";
+
+위와 같이 구현, O(N + logN + logN) == O(N), 사용 메모리 10348KB, 소요 시간 260ms
+
+두 구현 모두 PASS
+```
