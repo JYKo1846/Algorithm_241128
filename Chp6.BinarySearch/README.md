@@ -1,6 +1,8 @@
 # Chapter 6. 이분탐색 
 문제 뒤의 알파벳&숫자 : 문제의 난이도 B(Bronze) S(Silver) G(Gold) P(Platinum) / 숫자가 작을수록 난이도가 높아짐
 
+
+
 "정렬"되어있는 집합에서 원하는 값을 찾는 효율적인 탐색 방법
 
 임의의 값과 원하는 값을 비교하여 탐색범위를 줄일 수 있다.
@@ -8,6 +10,17 @@
 M을 [L:R] 사이의 중앙값 ((L+R)/2의 인덱스에 있는 값)으로 지정하여 조사 범위를 반으로 줄여가며
 
 탐색하는 방법.
+
+
+* 이분 탐색의 응용 Parametic Search 매개변수 탐색
+
+이분 탐색으로 최적값을 찾는 탐색 기법
+
+연속적 또는 이산적인 값의 집합에서 X를 경계로 조건을 만족하는 집단 & 답이 될 수 없는 집합을 이분적으로
+
+판정할 수 있을 시 사용 가능.
+
+모든 A에 대해 탐색하지 않고 최적값 X를 기준으로 판정 기준을 나눌 수 있다면 이분 탐색 적용 가능.
 
 ```
 while(L<= R)
@@ -179,7 +192,7 @@ for(int i= 0; i< N-1; i++)
 :page_with_curl: https://www.acmicpc.net/problem/10816
 
 ```
-N개의 정수들로 이루어진 집합에서 질문으로 들어오는 수의 갯수를 출력하는 문제.
+N개의 정수들로 이루어진 집합에서 질문으로 들어오는 M개의 수의 갯수를 출력하는 문제.
 
 단, 정수의 갯수는 최대 50만, 정수의 범위는 -1억 ~ 1억까지 이므로 int[]로 갯수를 세거나
 
@@ -288,5 +301,177 @@ cout << "\n";
 
 위와 같이 구현, O(N + logN + logN) == O(N), 사용 메모리 10348KB, 소요 시간 260ms
 
-두 구현 모두 PASS
+iii) 이분 탐색과 Lower_bound & Upper_bound를 활용하여 갯수를 탐색하는 방법이 있다.
+lower_bound : X 값 "이상"의 값이 처음 나오는 위치
+upper_bound : X 값 "초과"의 값이 처음 나오는 위치
+
+갯수를 셀 때, upper_bound index - lower_bound index = X의 갯수가 나올 수 있다.
+
+만약, 찾는 수가 없을 경우 lower_bound 와 upper_bound의 값이 서로 같게 되어 갯수가 0이 된다. (문제 없음)
+
+Lower_bound & Upper_bound 를 찾을 땐, 이분 탐색과 비슷하게 mid 값을 설정하여 찾으면 되지만 이분 탐색과 다른 점은
+
+찾는 값과 중앙값이 같을 경우는 처리하지 않는 것에 있다!
+
+int findLowerBound(int val)
+{
+	int L, R, val, lowerBoundIndex;
+	L= 0;
+	R= in.size() -1;
+	lowerBoundIndex= in.size();
+
+	while(L<= R)
+	{
+		mid= (L+R)/2;				// 중앙값 탐색
+		if(in[mid]< val) L= mid +1;	// 찾고자 하는 값보다 작은 수들은 탐색할 필요 X
+		else						// 값보다 같거나 클 경우 거기에 lowerBound가 있을
+		{							// 가능성이 있으므로
+			R= mid -1;				// while문 종료 & 탐색범위의 축소를 위해
+			lowerBoundIndex= mid;	// 정확히 찾을 경우 여기서 lowerBoundIndex가 갱신될 것
+		}							// lowerBoundIndex는 작은 값으로 갱신 될 것이므로 비교 X
+	}
+	return lowerBoundIndex;
+}
+
+int findUpperBound(int val)
+{
+	int L, R, mid, upperBoundIndex;
+	L= 0;
+	R= in.size();
+	upperBoundIndex= in.size();
+
+	while(L<= R)
+	{
+		mid= (L+R)/2;
+		if(in[mid]<= val) L= mid +1;	// 초과 값을 찾는 것이므로 val과 같은 값을 찾을 경우 한칸 오른쪽 이동
+		else							// 찾고자 하는 값보다 클 경우 그것이 답이 될 수도 있다.
+		{								
+			R= mid -1;					// while문 종료 & 탐색 범위 축소
+			upperBoundIndex= mid;		// 해당 값이 정답일 수도 있으므로 mid 값 저장
+		}
+	}
+	return upperBoundIndex;
+}
+
+위 구현의 경우, 수행 시간은 O(M(logN+ logN)) == O(MlogN), 사용 메모리 5224KB, 소요 시간 300ms 
+
+세 구현 모두 PASS
+```
+
+### 0054. BOJ 2417 정수의 제곱근. S4
+:page_with_curl: https://www.acmicpc.net/problem/2417
+
+```
+이분 탐색의 응용으로 매개 변수 탐색을 사용하는 문제.
+
+unsigned long long 범위의 정수 N을 입력 받았을 때, N보다 큰 정수 중 가장 작은 정수를 출력하는 문제.
+
+20을 예로 들게 되면, 
+
+1, 2, 3, 4는 거짓 . 5, 6, 7, 8 부터 참이 된다. 
+
+위와 같이 최적값 5를 기준으로 참 거짓을 알 수 있으므로 이분 탐색 적용 가능!
+
+이분 탐색을 적용하려면 정렬해야 하지만, L을 1부터 차츰 오름차순으로 올리므로 정렬이 이미 되어있다고 생각할 수 있음!
+
+unsigned long long N, L, R, mid, ans, val;
+
+cin >> N;
+L= 1;
+R= 1ULL << 32;
+
+while(L<= R)
+{
+	mid= (L+R)/2;
+	val= mid * mid;
+	if(val < N) L= mid +1;		// mid 이하의 값은 모두 최적의 값이 아닌게 판명났으므로 판정 X
+	else						// N보다 큰 제곱 수 중 가장 작은 수를 찾기 위한 조건문
+	{
+		R= mid -1;				// mid 값보다 큰 수 또는 최적의 해가 될 수도 있음
+		ans= mid;				// 따라서 값을 ans에 넣고 R을 -1함으로써 종료 또는 최적의 해를 
+	}							// 더 찾을 수 있음.
+}
+
+cout << ans << "\n";
+
+return 0;
+
+위와 같은 구현으로, 0.4초 제한시간에 0ms 수행 시간으로 PASS
+
+```
+
+### 0055. BOJ 2805 나무 자르기. S2
+:page_with_curl: https://www.acmicpc.net/problem/2805
+
+```
+이분 탐색의 응용으로 매개 변수 탐색을 사용하는 문제.
+
+입력으로 받는 N개의 정수에 대해 어떠한 수 X를 뺐을 때, M의 값 이상으로 얻을 수 있는 수를 알아내는 문제이다.
+
+그 수 중 가장 최대값을 출력하는 문제이다. 
+
+시간 제한은 1초, N은 최대 100만개 까지 되므로 X에 일일이 0 ~ 최대 나무 길이까지 대입시 시간 초과가 자명하다.
+
+또한, 입력받는 정수의 범위는 최대 10억이다.
+
+최적의 빼는 값 X를 기준으로 X보다 작아질수록 조건을 만족하게 될 것이고,
+
+X보다 커지면 조건을 불만족하게 될 것이다.
+
+이 X값을 기준으로 PASS 와 FAIL이 나뉘므로 이분 탐색이 가능하다. 이분 탐색을 통해 수행 시간을 단축시킬 수 있다.
+
+그리고 문제의 아이디어가 헷갈리므로 적어가면서 진행하였다.
+
+tot= X를 뺀 이후 가져갈 수 있는 수 
+( 각 나무의 길이는 최대 10억이므로 Worst Case 10억 * 100만으로 int type은 Overflow => long long type으로 저장 )
+
+toCut= X 값, (L+R)/2 로 이분 탐색 방식으로 찾을 것이다.
+
+L= 0 (이분 탐색의 왼쪽 기준, 0부터 탐색하여 X==0일때 정답이 되는 경우도 탐색할 수 있도록 구현)
+
+R= N개의 정수 중 가장 큰 수 max_t ( 입력 받은 정수 중 가장 큰 정수를 대입하여 0 ~ 100만까지의 탐색에서 줄이기 위함)
+
+그리고, tot가 커질수록 (L+R)/2 즉 toCut의 값은 작은 것이다. 하지만 문제는 toCut중 최대값을 원하므로
+
+i) tot가 커질수록 toCut의 값을 늘려야 함을 알 수 있다.
+
+ii) tot가 작을수록 toCut의 값이 너무 큰 것이기 때문에, toCut의 값을 줄여야 함을 알 수 있다.
+
+위 두가지 아이디어를 종이에 적고 코딩을 시작 했기 때문에, 코딩 중 헷갈리지 않도록 하였다.
+
+int N, M, H, toCut, max_t= -1;
+long long tot;
+
+cin >> N >> M;
+for(int i= 0; i< N; i++)
+{
+	int t;
+	cin >> t;
+	in.push_back(t);
+	max_t= max_t > t ? max_t : t;
+}
+
+int L, R;
+L= 0;								// toCut의 값이 0일 경우도 따지기 위함.
+R= max_t;
+
+while(L<= R)
+{
+	toCut= (L+R)/2;
+	for(int i= 0; i< in[i]; i++)	// 100만의 탐색을 logH만큼 시행했기 때문에 시간 초과 X
+		if(in[i] > toCut) 
+			tot+= (in[i]- toCut);
+	if(tot >= M)					// tot가 M보다 크므로 tot를 줄여야 함. 이럴 경우,
+	{
+		L= toCut +1;				// toCut을 늘리기 위해 L값 toCut+1;
+		H= toCut;					// 그리고, H는 toCut을 늘릴때 마다 점점 커질 것이므로 비교 연산 필요 X
+	}
+	else							// tot가 M보다 작으므로 tot를 늘려야 함. 이럴 경우,
+		R= toCut -1;				// toCut을 줄이기 위해 R값 toCut -1;
+}
+
+cout << H << "\n"; 
+
+위 처럼 구현 시 시간 복잡도 O(NlogH) , 메모리 사용 8292KB, 소요 시간 164ms 로 PASS하게 된다.
+
 ```
