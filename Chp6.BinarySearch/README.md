@@ -672,3 +672,311 @@ cout << ans << "\n";				// 정답 출력
 
 위와 같은 구현으로 PASS, 사용 메모리 3688KB, 소요 시간 32ms.
 ```
+
+### 0059. BOJ 2512 예산. S2
+:page_with_curl: https://www.acmicpc.net/problem/2512
+
+```
+N개의 예산 X과 T의 총 예산이 주어진다. 이때, T를 넘지 않는 최대로 배정할 수 있는 예산 Y를 배정하는 프로그램 만들기.
+
+모든 도시에 주어지는 예산은 동일해야 하므로, 이분 탐색 중 매개변수 탐색을 사용하면 된다. (T를 넘지 않는 최대의 예산)
+
+이때, 배정 예산을 초과 하지 않는 도시의 예산은 그대로 책정되지만, 초과하는 도시의 예산은 배정된 예산만큼만 사용할 수 있도록 한다.
+
+위 조건으로 이분탐색에 이용하기 위한 R 한계값은 입력값중 가장 큰 값을 배정하여 탐색하도록 하였다. 
+
+L 한계값의 경우, 예산의 최소 금액이 1이므로, 1부터 탐색하도록 구현하였다.
+
+배정 예산을 책정하되, 최대가 되도록 만들어야 한다.
+
+i) 배정 예산이 Y일때, 모든 도시에 주어지는 예산 총합이 T를 넘지 않을 경우 => Y가 최적이거나 더 큰 값이 정답일 수 있다.
+
+=> Y를 더 증액하도록 L = 배정 예산 + 1; 그리고, 배정 예산은 항상 최대로 갱신될 것이므로 비교 연산은 필요 없을 것이다.
+
+ii) 모든 도시에 주어지는 예산 총합이 T를 넘을 경우 => Y 보다 작은 값이 정답일 것이다. => Y를 감액 할 수 있도록 R= Y - 1;
+
+
+int calcBud(int estBud)
+{
+	int totBud= 0;
+	for(i= 0; i< in.size(); i++)
+	{
+		if(in[i]<= estBud)
+			totBud+= in[i];
+		else
+			totBud+= estBud;
+	}
+	return totBud;
+}
+
+cin >> N;
+for(i= 0; i< N; i++)
+{
+	int t;
+	cin >> t;
+	in.push_back(t);
+	max_v= max_v > t ? max_v : t;
+}
+
+int L, R, Y, ansBud;
+L= 1;
+R= max_v;
+
+while(L<= R)
+{
+	Y= (L + R)/2;
+	if(calcBud(Y)<= T)
+	{
+		L = Y + 1;
+		ansBud= Y;
+	}
+	else
+		R = Y - 1;
+}
+
+cout << ansBud << "\n"
+
+위와 같은 구현으로 사용 메모리 2160KB, 소요 시간 0ms 로 PASS 하였다.
+```
+
+### 0060. BOJ 2343 기타 레슨. S1
+:page_with_curl: https://www.acmicpc.net/problem/2343   
+
+```
+기타 강의 영상을 블루레이로 만들어 판매하려 함. N개의 강의가 있고 순서가 바뀌면 안됨.
+
+이때, 블루 레이 갯수를 최소화 하려고 한다. M개의 블루레이에 최소한의 용량이 들어갈 수 있도록
+
+하는 프로그램을 만드는 문제.
+
+강의의 수 N 1<= N <= 100,000 
+
+블루 레이 갯수 M 1<= M <= N
+
+이분 탐색 중 매개 변수 탐색을 이용하여 구현하였음
+
+i) 최적의 용량 Y 일때, M개보다 많은 수의 블루레이가 생성될 경우, Y를 늘려 블루레이의 수가
+
+줄어들 수 있도록 해야 한다. R= Y - 1;
+
+ii) M보다 작거나 같은 수의 블루 레이가 생성 될 경우, Y를 줄여 최소의 블루레이의 용량 혹은
+
+최적의 용량을 알아 낼 수 있다. L= Y + 1; ans_Y= Y;
+
+위와 같은 조건으로 아래와 같이 이분 탐색을 구현 할 수 있다.
+
+int calcBlu(int availCap)		// 설정 용량보다 큰 영상이 있을 경우
+{								// 설정 용량이 작은 것이므로 부적절한 답
+	int bluNum= 1;
+	int remainCap= availCap;
+	for(i= 0; i< in.size(); i++)
+	{
+		if(remainCap < in[i])
+		{
+			remainCap= availCap - in[i];	
+			if(remainCap< 0) bluNum= 10005;	// bluNum이 나올 수 없는 답을 설정하여
+			bluNum++;						// 답이 될 수 없도록 만듬.
+		}									// 외의 경우, 다음 블루레이로 넘어가고
+		else								// 블루레이의 갯수 증가
+			remainCap-= in[i];
+	}
+	return bluNum;
+}
+
+int L, R, availCap, ansCap;
+L= 1;
+R= totCap; 		// 모든 영상 용량의 총합
+
+while(L<= R)
+{
+	availCap= (L + R)/2;
+	if(calcBlu(availCap)> M)
+		L= availCap + 1;
+	else
+	{
+		R= availCap - 1;
+		ansCap= availCap;
+	}
+}
+
+cout << ansCap << "\n";
+
+
+두번 틀렸었던 이유
+
+1) L= 1로 초기화 하지 않았음. 최소 용량은 1부터 탐색해야 하는데 범위 설정을 잘못 했음
+
+2) calcBlu() 함수에서 설정 용량이 강의 영상보다 작을 경우의 예외 처리를 하지 않아 오답이었음
+
+그래서 추가, PASS함.
+
+위와 같은 구현으로 사용 메모리 2916KB, 소요 시간 8ms 로 PASS 하였다.
+```
+
+### 0061. BOJ 2792 보석 상자. S1
+:page_with_curl: https://www.acmicpc.net/problem/2792
+
+```
+보석은 M가지 색상을 가지고, N개의 학생들에게 모두 나눠 주려고 한다.
+
+단, 한 학생은 같은 색상의 보석만 가질 수 있다. 그리고, 0개를 받는 학생이 있을수도 있다.
+
+이때, 한 학생이 받을 수 있는 보석 수를 최소로 나눌 수 있는 방법을 알아내는 프로그램을 만드시오.
+
+학생들의 수 N 1<= N <= 1,000,000,000
+
+색상의 수 M 1<= M <= 300,000
+
+각 색상 별 보석 수 K 1<= K <= 1,000,000,000
+
+이분 탐색 중 매개 변수 탐색을 통해 답을 알아 낼 수 있다.
+
+최적의 보석 수를 X라 할때,
+
+i) N 보다 더 많은 수의 학생에게 나눠줄 경우, X를 너무 작게 예상함. => X를 증가 시키기 위해 L= X + 1
+
+ii) N보다 적거나 같은 수의 학생에게 나눠줄 경우, X를 더 키울 수 있거나 최적의 답. => X를 감소 or 정답으로 선정
+
+=> R= X -1; ansNum= X;
+
+위와 같은 조건으로 매개변수 탐색을 구현하면 아래와 같이 된다.
+
+int calcStudent(int estNum)		// 보석 수를 정했을 때, 나눠 줄 수 있는 학생수 계산 함수
+{
+	int studentN= 0;
+	for(i= 0; i< in.size(); i++)
+	{
+		studentN+= in[i] / estNum;	// (보석 수 / 보석 할당 수) 로 한 색상에 줄 수 있는 학생 수 계산
+		if(in[i]%estNum != 0) studentN++;	// 할당 수 보다 적게 남았을 경우, 한 학생에게 나머지 주기.
+	}
+}
+
+int L, R, estNum, ansNum;
+L= 1;					// 최소 1개 부터
+R= 100000005;			// 보석 할당 수를 확인 할 범위의 최대값은 한 색상의 보석의 최대 갯수 10억
+
+while(L<= R)
+{
+	estNum = (L + R)/2;
+	if(calcStudent(estNum)<= N)
+	{
+		R= estNum - 1;
+		ansNum= estNum;		// ansNum은 R이 갱신될 때 마다 최솟값으로 갱신되므로 비교 연산이 필요 없게 된다.
+	}
+	else
+		L= estNum + 1;
+}
+
+cout << ansNum <<"\n";
+
+위와 같은 구현으로 사용 메모리 5220KB, 소요 시간 60ms 로 PASS하였다.
+```
+
+### 0062. BOJ 2143 두 배열의 합. G3
+:page_with_curl: https://www.acmicpc.net/problem/2143
+
+```
+두 배열의 구간합의 합으로 값 T가 되는 경우의 수의 갯수를 출력하는 문제 이다.
+
+이때, 값 T -1,000,000,000 <= T <= 1,000,000,000
+
+배열 A의 길이 N 1 <= N <= 1000
+
+배열 B의 길이 M 1 <= M <= 1000
+
+각 배열의 원소는 최대 절대값 1,000,000 이다.
+
+답이 한 가지의 경우도 없을 경우, 0 출력.
+
+map을 사용해도 되지만, 이분 탐색을 이용해 구현하였다.
+
+A와 B에서 나올 수 있는 구간 합을 모두 구한 뒤, lower_bound 와 upper_bound를 활용하여
+
+각 구간합에서 나올 수 있는 수의 갯수를 센 후, T - A 구간합의 수 == B 의 구간합의 수 를
+
+ans+= B 구간합의 수 로 저장하여 출력하도록 하였다.
+
+int findLowerbound(vector<int> &vec, int X)
+{
+	int L, R, mid, ans= -1;
+	L= 0; R= vec.size() -1;
+	while(L<= R)
+	{
+		mid= (L + R)/2;
+		if(in[mid] <= X)
+		{
+			L= mid + 1;
+			ans= mid;
+		}
+		else
+			R= mid - 1;
+	}
+	return ans;
+}
+
+int findUpperbound(vector<int> &vec, int X)
+{
+	int L, R, mid, ans= vec.size() -1;
+	L= 0; R= vec.size() -1;
+	while(L<= R)
+	{
+		mid= (L + R)/2;
+		if(in[mid]< X)
+			L= mid + 1;
+		else
+		{
+			R= mid - 1;
+			ans= mid;
+		}
+	}
+	return ans;
+}
+
+위와 같은 방식으로 lower_bound & upper_bound를 설정했으나, 문제 22%에서 틀림
+
+하지만, algorithm.h STL에서 제공하는 lower_bound, upper_bound를 사용하면
+
+해결된다. 이유는 계속 찾는 중....
+
+for(i= 0; i< N; i++)
+{
+	sum= A[i];
+	combA.push_back(sum);
+
+	for(j= i+ 1; j< N; j++)
+	{
+		sum+= A[j];
+		combA.push_back(sum);
+	}
+}
+
+for(i= 0; i< M; i++)
+{
+	sum= B[i];
+	combB.push_back(sum);
+
+	for(j= i+1; j< N; j++)
+	{
+		sum+= B[j];
+		combB.push_back(sum);
+	}
+}
+
+sort(combB.begin(), combB.end());
+
+long long B_LB= 0, B_UB= 0, availTotNum= 0;
+// 배열 B에서 나올 수 있는 T - combA[i] 값의 lower bound 와 upper_bound 를 저장
+// 그리고, upper_bound - lower_bound 하면 배열 B에서 나올 수 있는 모든 조합의 수를
+// 알 수 있게 된다. 그리고, 그 수들의 합은 availTotNum에 넣게 되므로 int 범위를 넘을 수도 있으므로 long long에 저장
+
+for(i= 0; i< combA.size(); i++)
+{
+	int var= T - combA[i];
+	availTotNum= (long long)(upper_bound(combB.begin(), combB.end(), var) - lower_bound(combB.begin(), combB.end(), var));
+}
+
+algorithm.h 에서 제공하는 lower_bound 와 upper_bound를 사용하여 갯수를 알아낼 경우
+
+사용 메모리 8304KB, 소요 시간 116ms 로 문제를 PASS
+
+```
