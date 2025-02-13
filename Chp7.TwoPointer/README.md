@@ -197,3 +197,101 @@ for(int i= 0; i< N; i++)
 위와 같은 구현으로 통과하였음. 소요 메모리 2216KB, 소요 시간 4ms, Big-O O(N) 이 된다.
 ```
 
+### 0067. BOJ 11728 배열 합치기. S5  
+:page_with_curl: https://www.acmicpc.net/problem/11728
+
+```
+정렬된 정수 배열을 두가지 입력 받을 때, 두 배열을 합치고 정렬한 상태로 출력하는 문제.
+
+두가지 방법으로 풀었다. Vector + sort() 사용 , 투 포인터 사용.
+
+i) Vector + sort() 사용시
+
+vector<int> A, B;
+
+A.insert(A.end(), B.begin(), B.end());
+A.sort();
+
+위 알고리즘 사용으로 구현 & PASS. 사용 메모리 18160KB, 소요 시간 560ms 
+
+Big-O : insert() : O(N) & sort() : O(NlogN) => O(N+NlogN) = O(NlogN)
+
+이때, Vec.end()는 Vec의 마지막 원소 다음 주소를 가리키는 것을 잊지 말 것!
+
+ii) 투 포인터 사용시
+
+두 배열이 정렬되어 있으므로 두 배열에 각각 포인터 하나씩 두고, 더 큰 값이 나올때까지
+
+출력하도록 구현 & PASS
+
+int A[], B[];
+
+
+int ptr_a, ptr_b;
+
+ptr_a= 0;
+ptr_b= 0;
+
+while(ptr_a < A.size() && ptr_b < B.size())
+{
+	if(A[ptr_a]< B[ptr_b]) cout << A[ptr_a++];
+	else if(A[ptr_a] > B[ptr_b]) cout << B[ptr_b++];
+	cout << " ";
+}
+
+while(ptr_a < A.size()) cout << A[ptr_a++] << " ";
+while(ptr_b < B.size()) cout << B[ptr_b++] << " ";
+
+cout << "\n";
+
+위와 같이 구현하여 PASS. 사용 메모리 9832KB, 소요 시간 432KB, Big-O : O(N+M) => O(N)
+```
+
+### 0068. BOJ 17609 회문. G5  
+:page_with_curl: https://www.acmicpc.net/problem/17609
+
+```
+회문을 찾는 문제. 단, 한 글자를 제외한 후 회문이 될 경우 유사 회문으로 취급하는 문제. 
+
+회문일 경우, 0 출력. 유사 회문일 경우, 1 출력. 회문이 아닐 경우, 2 출력.
+
+아래와 같은 조건으로 탐색하면 된다. 회문 탐색 시 투 포인터를 사용하여 앞 뒤 비교한다.
+
+1) 양 끝에서 탐색을 시작, S[i++] <=> S[S.size()-1 --] 비교하며같은지 탐색한다.
+2) 다른 문자가 발견되었을 경우, 두가지로 나뉠 수 있다.
+	2-1) 앞의 문자가 다를 경우, S[X+1] ~ S[Y] 는 회문일 것이다.
+	2-2) 뒤의 문자가 다를 경우, S[X] ~ S[Y-1] 은 회문일 것이다.
+3) 위 두 조건 모두 만족하지 않을 경우, 회문이 아닐 것이다.
+
+위와 같은 조건으로 구현하면 문자열 탐색 O(2*S.size()) => O(S)로 실행될 것이다.
+
+isPalin(string in, int L, int R)
+{
+	while(L<= R)
+		if(in[L]!= in[R]) return false;
+	
+	return true;
+}
+
+cin >> T;
+while(T--)
+{
+	string in;
+	int L, R;
+	while(L<= R)
+	{
+		if(in[L]!= in[R])
+		{
+			if(isPalin(in, L+1, R) || isPalin(in, L, R-1)) ans= 1;
+			else ans= 2;
+			break;
+		}
+		L++;
+		R--;
+	}
+
+	cout << ans << "\n";
+}
+
+위와 같이 구현 시, 사용 메모리 2500KB, 소요 시간 12ms, Big-O : O(S) 로 PASS 된다.
+```
