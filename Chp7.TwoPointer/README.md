@@ -295,3 +295,81 @@ while(T--)
 
 위와 같이 구현 시, 사용 메모리 2500KB, 소요 시간 12ms, Big-O : O(S) 로 PASS 된다.
 ```
+
+### 0069. BOJ 15831 준표의 조약돌. G4  
+:page_with_curl: https://www.acmicpc.net/problem/15831
+
+```
+임의의 지점에서 탐색을 시작해, B개 이하의 검은 조약돌과 W개 이상의 흰 조약돌을 
+
+주울 때, 최대로 주울 수 있는 거리를 출력하는 문제.
+
+투 포인터로 구현하고, 검은 돌의 갯수가 B개가 될 때 W개 이상의 흰 돌이 되는지
+
+확인하고 거리를 비교해 최대값을 갱신하면 된다.
+
+[i-1 : j]에서 검은색이 B개 이하인 최대 j를 찾을 수 있을 경우, 
+[i : j]에서도 검은색이 B개 이하인 최대 j를 찾을 수 있다.
+따라서, 매번 세지 않고, [i-1]에 있던 돌 갯수 하나 빼면 된다.
+
+CurB= CurW= 0;
+nxt= 0;
+for(int st= 0; st< N; st++)
+{
+	while(nxt< N)
+	{
+		if(CurB== B && in[nxt]== 'B') break;
+		if(in[nxt]== 'B') CurB++;
+		else CurW++;
+	}
+
+	if(CurW>= W) ans= ans > CurW+ CurB ? ans : CurW+ CurB;
+
+	if(in[st]== 'B') CurB--;
+	else CurW--;
+}
+
+위와 같은 식으로 투 포인터 슬라이딩 윈도우 방식으로 구현 시,
+
+사용 메모리 2192KB, 소요 시간 4ms, Big-O : O(N) 이 된다.
+
+```
+
+### 0070. BOJ 16472 고냥이. G4  
+:page_with_curl: https://www.acmicpc.net/problem/16472
+
+```
+문자열이 입력되고, 임의의 자연수 0<= N <= 26가 주어진다. 이때, 
+
+N개의 알파벳만으로 이루어진 부분문자열의 최대 길이를 출력하는 프로그램을 만드는 문제.
+
+투 포인터 슬라이딩 윈도우로 구현하면 된다. 시작 문자를 바꾸면서 
+
+해당 알파벳의 총 갯수를 빼며 계산하는 식으로 구현하였다.
+
+nxt= alphaN= 0;
+for(int st= 0; in[st]!= '\0'; st++)
+{
+	while(in[nxt]!= '\0')
+	{
+		// 허용된 알파벳 갯수가 N개 일때, 새로운 알파벳이 추가될 경우 탐색 종료
+		if(alphaN== N && alpha[in[nxt]-'a']== 0) break;
+		// N개를 넘지 않을 때, 새로운 알파벳이 추가될 경우 알파벳 갯수 증가
+		if(alpha[in[nxt]-'a']== 0) alphaN++;
+		// 현재 선택된 부분 문자열에서 사용된 알파벳 갯수 저장 배열 갯수 추가
+		alpha[in[nxt++]-'a']++;
+		tmpLen++;
+	}
+
+	ans= ans > tmpLen ? ans : tmpLen;
+	alpha[in[st]-'a']--;
+	tmpLen--;
+	// 시작 문자열의 알파벳이 유일한 사용 알파벳일 경우
+	// 사용 알파벳 개수 감소
+	if(alpha[in[st]-'a']== 0) alphaN--;
+}
+
+C언어로 구현하였으며, 위와 같이 구현시 사용 메모리 1112KB, 소요 시간 0ms
+
+Big-O : O(N)이 된다.
+```
