@@ -14,19 +14,33 @@ iii) 검색 및 원소 접근 속도는 vector에 비해 느리다. 순차 탐�
 
 iiii) List STL의 주요 멤버 함수
 	begin() : 컨테이너의 맨 앞을 가리키는 iterator를 반환.
+
 	end() : 컨테이너 맨 뒤를 가리키는 iterator를 반환.
+
 	assign(A, X) : X로 초기화된 노드를 A개 만큼 할당
+
 	front() : 컨테이너 맨 앞 데이터 반환, 참조
+
 	back() : 컨테이너 맨 뒤 데이터 반환, 참조
+
 	push_back() : 컨테이너 끝에 데이터 추가
+
 	push_front() : 컨테이너 앞에 데이터 추가
+
 	pop_back() : 컨테이너 끝 데이터 제거
+
 	pop_front() : 컨테이너 맨 앞 데이터 제거
+
 	clear() : 컨테이너 내부 모든 데이터 제거
+
 	empty() : 컨테이너에 저장된 데이터가 있을 경우 false, 없을 경우 true 반환
+
 	size() : 컨테이너에 저장된 데이터 갯수 반환
+
 	insert(A, X) : A위치에 X 데이터 입력
+
 	erase(iter_begin(), iter_end()) : iter_begin ~ iter_end 범위의 데이터 제거
+	
 	remove(A) : 지정한 값 A와 일치하는 모든 데이터 제거
 
 ### 0076. BOJ 1158 요세푸스. S4  
